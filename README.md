@@ -148,13 +148,6 @@ to see the exact command names to use in your RosCard configuration.
 
 ---
 
-## Planned
-
-- Additional command sources: `remote` entities, `media_player` entities, `script` calls
-- This will allow mixing sources on a single virtual remote, e.g. volume from a media player and navigation from MQTT buttons
-
----
-
 ## License
 
 MIT
