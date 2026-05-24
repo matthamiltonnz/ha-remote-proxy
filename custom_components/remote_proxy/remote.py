@@ -1,4 +1,4 @@
-"""Virtual Remote entity."""
+"""Remote Proxy entity."""
 from __future__ import annotations
 
 import logging
@@ -25,10 +25,10 @@ async def async_setup_entry(
     command_map = {c["command"]: c["entity_id"] for c in commands}
     turn_on_cmd = entry.options.get(CONF_TURN_ON_COMMAND) or entry.data.get(CONF_TURN_ON_COMMAND)
     turn_off_cmd = entry.options.get(CONF_TURN_OFF_COMMAND) or entry.data.get(CONF_TURN_OFF_COMMAND)
-    async_add_entities([VirtualRemote(entry, command_map, turn_on_cmd, turn_off_cmd)])
+    async_add_entities([ProxyRemote(entry, command_map, turn_on_cmd, turn_off_cmd)])
 
 
-class VirtualRemote(RemoteEntity):
+class ProxyRemote(RemoteEntity):
     """A remote entity that proxies commands to individual button entities."""
 
     _attr_has_entity_name = True

@@ -1,4 +1,4 @@
-"""Config flow for Virtual Remote."""
+"""Config flow for Remote Proxy."""
 from __future__ import annotations
 
 from typing import Any
@@ -53,8 +53,8 @@ _ENTITY_SELECTOR = selector.selector(
 _DEVICE_SELECTOR = selector.selector({"device": {}})
 
 
-class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
-    """Handle a Virtual Remote config flow."""
+class RemoteProxyConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
+    """Handle a Remote Proxy config flow."""
 
     VERSION = 1
 
@@ -178,13 +178,13 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     @callback
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
-    ) -> VirtualRemoteOptionsFlow:
+    ) -> RemoteProxyOptionsFlow:
         """Return the options flow handler."""
-        return VirtualRemoteOptionsFlow()
+        return RemoteProxyOptionsFlow()
 
 
-class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
-    """Handle options for an existing Virtual Remote entry."""
+class RemoteProxyOptionsFlow(config_entries.OptionsFlow):
+    """Handle options for an existing Remote Proxy entry."""
 
     def __init__(self) -> None:
         """Initialise options flow state."""

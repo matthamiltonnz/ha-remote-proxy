@@ -1,4 +1,4 @@
-# Virtual Remotes — Home Assistant Custom Integration
+# Remote Proxy — Home Assistant Custom Integration
 
 Wraps any set of `button` entities into a single `remote` entity, making them callable
 via `remote.send_command`. Designed for MQTT-discovered buttons (e.g. LinknLink eRemote Mini)
@@ -16,13 +16,13 @@ that need to be exposed as a remote to external controllers like Unfolded Circle
 ## File structure
 
 ```
-custom_components/virtual_remote/
+custom_components/remote_proxy/
   __init__.py       # Entry setup/unload, options reload listener
   config_flow.py    # Two-step config flow: entity selection → command naming
                     # Same two steps used for options flow (reconfigure)
   const.py          # DOMAIN, CONF_COMMANDS
   manifest.json
-  remote.py         # VirtualRemote entity — proxies send_command → button.press
+  remote.py         # ProxyRemote entity — proxies send_command → button.press
   strings.json      # UI string keys (references common:: keys for standard messages)
   translations/
     en.json         # English translations
@@ -100,7 +100,7 @@ UC reads the `commands` state attribute to auto-discover available commands.
 ### Astrion Remote (RosCard — https://github.com/yyqclhy/RosCard)
 RosCard is a Lovelace card collection that runs on the Astrion Remote's screen. It works
 by calling HA services from card button actions — there is no native remote entity protocol.
-To use Virtual Remotes with RosCard, configure each card button action to call
+To use Remote Proxy with RosCard, configure each card button action to call
 `remote.send_command` targeting the virtual remote entity with the relevant command name.
 
 RosCard card types that can call arbitrary HA services: ros-tv-card (power_on/off, directional,

@@ -1,4 +1,4 @@
-# Virtual Remotes
+# Remote Proxy
 
 [![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
 
@@ -24,22 +24,22 @@ Useful when devices expose controls as separate buttons (common with MQTT-discov
 ### HACS (recommended)
 
 1. In HACS, go to **Integrations** → three-dot menu → **Custom repositories**
-2. Add `https://github.com/matthamiltonnz/ha-virtual-remotes` as an **Integration**
-3. Search for **Virtual Remotes** and install
+2. Add `https://github.com/matthamiltonnz/ha-remote-proxy` as an **Integration**
+3. Search for **Remote Proxy** and install
 4. Restart Home Assistant
 
 > **Note:** A restart is required after every install or update — HACS copies the files but HA only loads custom components on startup.
 
 ### Manual
 
-1. Copy `custom_components/virtual_remote/` into your HA `config/custom_components/` folder
+1. Copy `custom_components/remote_proxy/` into your HA `config/custom_components/` folder
 2. Restart Home Assistant
 
 ---
 
 ## Setup
 
-1. Go to **Settings → Devices & Services → Add Integration** and search for **Virtual Remotes**
+1. Go to **Settings → Devices & Services → Add Integration** and search for **Remote Proxy**
 2. Enter a name for the remote (e.g. `Blu-ray Player`)
 3. Select the button entities you want to include (pick a device to grab all its buttons at once, or choose individually)
 4. Review and remove any buttons you don't need
@@ -93,7 +93,7 @@ commands:
 
 ## Reconfiguring
 
-To add/remove buttons or rename commands, go to **Settings → Devices & Services → Integrations → Virtual Remotes**, then click the **gear icon** on your entry. This opens the full options flow.
+To add/remove buttons or rename commands, go to **Settings → Devices & Services → Integrations → Remote Proxy**, then click the **gear icon** on your entry. This opens the full options flow.
 
 > The pencil/edit icon on the remote entity only changes the entity name and area — use the gear icon on the integration entry for button mappings.
 
@@ -101,9 +101,9 @@ To add/remove buttons or rename commands, go to **Settings → Devices & Service
 
 ## Button entity sources
 
-Virtual Remotes works with any `button` entity in Home Assistant, regardless of how it was created. A common use case is **LinknLink devices connected via MQTT** — the LinknLink MQTT integration auto-discovers each button on a device and creates individual `button` entities (e.g. `button.unnamed_device_35`, `button.unnamed_device_53`). These can't be controlled as a unified remote out of the box.
+Remote Proxy works with any `button` entity in Home Assistant, regardless of how it was created. A common use case is **LinknLink devices connected via MQTT** — the LinknLink MQTT integration auto-discovers each button on a device and creates individual `button` entities (e.g. `button.unnamed_device_35`, `button.unnamed_device_53`). These can't be controlled as a unified remote out of the box.
 
-Virtual Remotes solves this: use **Select all button entities** during setup to pull in all of them at once, then give each one a meaningful command name (e.g. `Play`, `Home`, `Up`). The result is a single `remote.blu_ray_player` entity you can drive with `remote.send_command`.
+Remote Proxy solves this: use **Select all button entities** during setup to pull in all of them at once, then give each one a meaningful command name (e.g. `Play`, `Home`, `Up`). The result is a single `remote.blu_ray_player` entity you can drive with `remote.send_command`.
 
 Other supported sources include any integration that exposes `button` entities — Z-Wave, Zigbee, custom MQTT devices, scripts exposed as buttons, and more.
 
@@ -113,12 +113,12 @@ Other supported sources include any integration that exposes `button` entities �
 
 ### Unfolded Circle Remote 3
 
-Virtual Remotes is a native fit — UC reads the `commands` state attribute to auto-discover
+Remote Proxy is a native fit — UC reads the `commands` state attribute to auto-discover
 available commands, then you map them to physical buttons in the UC integration.
 
 ### Astrion Remote (via [RosCard](https://github.com/yyqclhy/RosCard))
 
-The [Astrion Remote](https://github.com/yyqclhy/RosCard) runs a Home Assistant Lovelace dashboard directly on the remote's screen. [RosCard](https://github.com/yyqclhy/RosCard) is the card collection that powers it, calling HA services from card button actions. To use a Virtual Remote with RosCard, configure each button action in your RosCard card to call `remote.send_command`:
+The [Astrion Remote](https://github.com/yyqclhy/RosCard) runs a Home Assistant Lovelace dashboard directly on the remote's screen. [RosCard](https://github.com/yyqclhy/RosCard) is the card collection that powers it, calling HA services from card button actions. To use a Remote Proxy with RosCard, configure each button action in your RosCard card to call `remote.send_command`:
 
 ```yaml
 type: custom:ros-tv-card
@@ -143,7 +143,7 @@ select:
     command: Select
 ```
 
-Check the `commands` state attribute on your virtual remote entity (Developer Tools → States)
+Check the `commands` state attribute on your remote entity (Developer Tools → States)
 to see the exact command names to use in your RosCard configuration.
 
 ---

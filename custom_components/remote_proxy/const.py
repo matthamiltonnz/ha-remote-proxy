@@ -1,5 +1,5 @@
-"""Constants for the Virtual Remote integration."""
-DOMAIN = "virtual_remote"
+"""Constants for the Remote Proxy integration."""
+DOMAIN = "remote_proxy"
 CONF_COMMANDS = "commands"
 CONF_TURN_ON_COMMAND = "turn_on_command"
 CONF_TURN_OFF_COMMAND = "turn_off_command"

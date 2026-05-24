@@ -2,7 +2,7 @@
   "config": {
     "step": {
       "user": {
-        "title": "Create a Virtual Remotes",
+        "title": "Create a Remote Proxy",
         "description": "Give this remote a name and choose which button entities it should expose as commands.",
         "data": {
           "name": "Remote name",
