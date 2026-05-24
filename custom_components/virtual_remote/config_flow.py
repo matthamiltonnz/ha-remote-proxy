@@ -6,6 +6,7 @@ from typing import Any
 import voluptuous as vol
 
 from homeassistant import config_entries
+from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import entity_registry as er, selector
 
@@ -85,19 +86,19 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         return self.async_show_form(step_id="names", data_schema=schema)
 
     @staticmethod
+    @callback
     def async_get_options_flow(
         config_entry: config_entries.ConfigEntry,
     ) -> VirtualRemoteOptionsFlow:
         """Return the options flow handler."""
-        return VirtualRemoteOptionsFlow(config_entry)
+        return VirtualRemoteOptionsFlow()
 
 
-class VirtualRemoteOptionsFlow(config_entries.OptionsFlowWithConfigEntry):
+class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
     """Handle options for an existing Virtual Remote entry."""
 
-    def __init__(self, config_entry: config_entries.ConfigEntry) -> None:
+    def __init__(self) -> None:
         """Initialise options flow state."""
-        super().__init__(config_entry)
         self._selected_entities: list[str] = []
 
     async def async_step_init(
