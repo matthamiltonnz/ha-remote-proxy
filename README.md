@@ -10,7 +10,7 @@ Useful when devices expose controls as separate buttons (common with MQTT-discov
 
 ## Features
 
-- Create as many virtual remotes as you need — one per device
+- Create as many remote proxies as you need — one per device
 - Assign meaningful command names to each button (e.g. `button.unnamed_device_53` → `"Play"`)
 - Works with any `button` entity regardless of source (MQTT, LinknLink, Z-Wave, etc.)
 - Exposes a `commands` attribute listing all available commands — external controllers can read this to discover what's available
@@ -103,7 +103,7 @@ To add/remove buttons or rename commands, go to **Settings → Devices & Service
 
 Remote Proxy works with any `button` entity in Home Assistant, regardless of how it was created. A common use case is **LinknLink devices connected via MQTT** — the LinknLink MQTT integration auto-discovers each button on a device and creates individual `button` entities (e.g. `button.unnamed_device_35`, `button.unnamed_device_53`). These can't be controlled as a unified remote out of the box.
 
-Remote Proxy solves this: use **Select all button entities** during setup to pull in all of them at once, then give each one a meaningful command name (e.g. `Play`, `Home`, `Up`). The result is a single `remote.blu_ray_player` entity you can drive with `remote.send_command`.
+Remote Proxy solves this: use **Add all buttons from a device** during setup to pull in all of them at once, then give each one a meaningful command name (e.g. `Play`, `Home`, `Up`). The result is a single `remote.blu_ray_player` entity you can drive with `remote.send_command`.
 
 Other supported sources include any integration that exposes `button` entities — Z-Wave, Zigbee, custom MQTT devices, scripts exposed as buttons, and more.
 

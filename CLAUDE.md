@@ -18,8 +18,8 @@ that need to be exposed as a remote to external controllers like Unfolded Circle
 ```
 custom_components/remote_proxy/
   __init__.py       # Entry setup/unload, options reload listener
-  config_flow.py    # Two-step config flow: entity selection → command naming
-                    # Same two steps used for options flow (reconfigure)
+  config_flow.py    # Config flow: user → review → names → power (4 steps)
+                    # Same steps used for options flow (reconfigure)
   const.py          # DOMAIN, CONF_COMMANDS
   manifest.json
   remote.py         # ProxyRemote entity — proxies send_command → button.press
@@ -87,7 +87,7 @@ data:
 
 ## Power toggle behaviour
 
-`is_on` always returns `True` — the virtual remote has no meaningful on/off state.
+`is_on` always returns `True` — the proxy has no meaningful on/off state.
 `async_turn_on` and `async_turn_off` fire `async_send_command` with the configured command
 name, which in turn calls `button.press` on the mapped entity. If no command is bound, the
 toggle is a no-op (HA still shows the toggle but pressing it has no effect).
@@ -114,11 +114,11 @@ No code changes needed — compatibility is purely through HA service calls.
 UC reads the `commands` state attribute to discover available commands. Map them in the
 UC integration using the exact command name strings set during config flow.
 
-The remote entity is always `is_on = True` — virtual remotes have no meaningful power state.
+The remote entity is always `is_on = True` — the proxy has no meaningful power state.
 
 ## Community sharing checklist
 
 - [x] Update `manifest.json` `documentation` URL to the real GitHub repo
 - [x] Add `README.md` with install instructions and usage examples
-- [ ] Tag with semantic version matching `manifest.json` `version`
+- [x] Tag with semantic version matching `manifest.json` `version`
 - [ ] Submit to HACS default repository list (requires `hacs.json` + README + info.md)
