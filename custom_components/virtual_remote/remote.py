@@ -31,7 +31,6 @@ class VirtualRemote(RemoteEntity):
 
     _attr_has_entity_name = True
     _attr_name = None
-    _attr_is_on = True
     _attr_should_poll = False
 
     def __init__(
@@ -40,11 +39,17 @@ class VirtualRemote(RemoteEntity):
         """Initialise the virtual remote."""
         self._entry = entry
         self._command_map = command_map
+        self._is_on: bool = True
         self._attr_unique_id = entry.entry_id
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
             name=entry.title,
         )
+
+    @property
+    def is_on(self) -> bool:
+        """Return whether the remote is enabled."""
+        return self._is_on
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -53,6 +58,9 @@ class VirtualRemote(RemoteEntity):
 
     async def async_send_command(self, command: Iterable[str], **kwargs: Any) -> None:
         """Press the button entity mapped to each command."""
+        if not self._is_on:
+            _LOGGER.debug("Virtual remote '%s' is off — ignoring command", self._entry.title)
+            return
         for cmd in command:
             entity_id = self._command_map.get(cmd)
             if entity_id is None:
@@ -72,7 +80,11 @@ class VirtualRemote(RemoteEntity):
             )
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Virtual remotes are always on."""
+        """Enable the remote."""
+        self._is_on = True
+        self.async_write_ha_state()
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Virtual remotes are always on."""
+        """Disable the remote — commands will be ignored until turned back on."""
+        self._is_on = False
+        self.async_write_ha_state()
