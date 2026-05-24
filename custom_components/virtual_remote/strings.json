@@ -15,6 +15,13 @@
           "button_entities": "Pick individual buttons manually (used when no device is selected above)"
         }
       },
+      "review": {
+        "title": "Review buttons",
+        "description": "Remove any buttons you don't want on this remote, then click Submit.",
+        "data": {
+          "button_entities": "Buttons"
+        }
+      },
       "names": {
         "title": "Name the commands",
         "description": "Enter the command name for each button. These are the strings you pass to remote.send_command."
@@ -40,6 +47,13 @@
         "data_description": {
           "select_device": "Replaces current buttons with all button entities from this device",
           "button_entities": "Pick individual buttons manually (used when no device is selected above)"
+        }
+      },
+      "review": {
+        "title": "Review buttons",
+        "description": "Remove any buttons you don't want on this remote, then click Submit.",
+        "data": {
+          "button_entities": "Buttons"
         }
       },
       "names": {

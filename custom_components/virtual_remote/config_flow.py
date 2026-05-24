@@ -8,7 +8,7 @@ import voluptuous as vol
 from homeassistant import config_entries
 from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
-from homeassistant.helpers import device_registry as dr, entity_registry as er, selector
+from homeassistant.helpers import entity_registry as er, selector
 
 from .const import CONF_COMMANDS, DOMAIN
 
@@ -77,6 +77,10 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             else:
                 self._remote_name = user_input["name"]
                 self._selected_entities = entities
+                # Device selection → review step so user can remove unwanted buttons.
+                # Manual entity pick → user already chose exactly what they want.
+                if user_input.get("select_device"):
+                    return await self.async_step_review()
                 return await self.async_step_names()
 
         return self.async_show_form(
@@ -86,6 +90,32 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
                     vol.Required("name"): selector.selector({"text": {}}),
                     vol.Optional("select_device"): _DEVICE_SELECTOR,
                     vol.Optional("button_entities"): _ENTITY_SELECTOR,
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_review(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 1b: review and remove unwanted buttons before naming."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            entities = user_input.get("button_entities") or []
+            if not entities:
+                errors["base"] = "no_entities"
+            else:
+                self._selected_entities = entities
+                return await self.async_step_names()
+
+        return self.async_show_form(
+            step_id="review",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        "button_entities", default=self._selected_entities
+                    ): _ENTITY_SELECTOR,
                 }
             ),
             errors=errors,
@@ -148,6 +178,8 @@ class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
                 errors["base"] = "no_entities"
             else:
                 self._selected_entities = entities
+                if user_input.get("select_device"):
+                    return await self.async_step_review()
                 return await self.async_step_names()
 
         return self.async_show_form(
@@ -157,6 +189,32 @@ class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
                     vol.Optional("select_device"): _DEVICE_SELECTOR,
                     vol.Optional(
                         "button_entities", default=current_entities
+                    ): _ENTITY_SELECTOR,
+                }
+            ),
+            errors=errors,
+        )
+
+    async def async_step_review(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 1b: review and remove unwanted buttons before naming."""
+        errors: dict[str, str] = {}
+
+        if user_input is not None:
+            entities = user_input.get("button_entities") or []
+            if not entities:
+                errors["base"] = "no_entities"
+            else:
+                self._selected_entities = entities
+                return await self.async_step_names()
+
+        return self.async_show_form(
+            step_id="review",
+            data_schema=vol.Schema(
+                {
+                    vol.Required(
+                        "button_entities", default=self._selected_entities
                     ): _ENTITY_SELECTOR,
                 }
             ),
