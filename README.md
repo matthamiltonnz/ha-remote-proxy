@@ -92,6 +92,47 @@ To add/remove buttons or rename commands, go to **Settings → Devices & Service
 
 ---
 
+## Compatible controllers
+
+### Unfolded Circle Remote 3
+
+Virtual Remotes is a native fit — UC reads the `commands` state attribute to auto-discover
+available commands, then you map them to physical buttons in the UC integration.
+
+### Astrion Remote (via RosCard)
+
+RosCard (the Astrion Lovelace card collection) works by calling Home Assistant services
+from card button actions. To use a Virtual Remote with RosCard, configure each button
+action in your RosCard card to call `remote.send_command`:
+
+```yaml
+type: custom:ros-tv-card
+entity: media_player.living_room_tv
+power_on:
+  service: remote.send_command
+  target:
+    entity_id: remote.blu_ray_player
+  data:
+    command: Power
+up:
+  service: remote.send_command
+  target:
+    entity_id: remote.blu_ray_player
+  data:
+    command: Up
+select:
+  service: remote.send_command
+  target:
+    entity_id: remote.blu_ray_player
+  data:
+    command: Select
+```
+
+Check the `commands` state attribute on your virtual remote entity (Developer Tools → States)
+to see the exact command names to use in your RosCard configuration.
+
+---
+
 ## Planned
 
 - Additional command sources: `remote` entities, `media_player` entities, `script` calls

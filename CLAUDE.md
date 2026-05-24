@@ -79,6 +79,23 @@ data:
 - **Options flow**: Same two steps as initial setup. Reconfiguring replaces the full command list.
   The previous command names are pre-filled as defaults.
 
+## Compatible controller notes
+
+### Unfolded Circle Remote 3
+UC reads the `commands` state attribute to auto-discover available commands.
+
+### Astrion Remote (RosCard — https://github.com/yyqclhy/RosCard)
+RosCard is a Lovelace card collection that runs on the Astrion Remote's screen. It works
+by calling HA services from card button actions — there is no native remote entity protocol.
+To use Virtual Remotes with RosCard, configure each card button action to call
+`remote.send_command` targeting the virtual remote entity with the relevant command name.
+
+RosCard card types that can call arbitrary HA services: ros-tv-card (power_on/off, directional,
+long-press bindings), ros-scene-card (scripts/scenes). Map each button to a
+`remote.send_command` service call with the command string from the `commands` attribute.
+
+No code changes needed — compatibility is purely through HA service calls.
+
 ## Unfolded Circle integration
 
 UC reads the `commands` state attribute to discover available commands. Map them in the
