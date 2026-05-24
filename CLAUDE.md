@@ -89,7 +89,7 @@ The remote entity is always `is_on = True` — virtual remotes have no meaningfu
 ## Community sharing checklist
 
 Before publishing:
-- [ ] Update `manifest.json` `documentation` URL to the real GitHub repo
+- [x] Update `manifest.json` `documentation` URL to the real GitHub repo
 - [ ] Add `README.md` with install instructions and usage examples
 - [ ] Tag with semantic version matching `manifest.json` `version`
 - [ ] Submit to HACS default repository list (requires `hacs.json` + README + info.md)
