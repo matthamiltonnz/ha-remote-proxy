@@ -94,6 +94,16 @@ To add/remove buttons or rename commands, go to **Settings → Devices & Service
 
 ---
 
+## Button entity sources
+
+Virtual Remotes works with any `button` entity in Home Assistant, regardless of how it was created. A common use case is **LinknLink devices connected via MQTT** — the LinknLink MQTT integration auto-discovers each button on a device and creates individual `button` entities (e.g. `button.unnamed_device_35`, `button.unnamed_device_53`). These can't be controlled as a unified remote out of the box.
+
+Virtual Remotes solves this: use **Select all button entities** during setup to pull in all of them at once, then give each one a meaningful command name (e.g. `Play`, `Home`, `Up`). The result is a single `remote.blu_ray_player` entity you can drive with `remote.send_command`.
+
+Other supported sources include any integration that exposes `button` entities — Z-Wave, Zigbee, custom MQTT devices, scripts exposed as buttons, and more.
+
+---
+
 ## Compatible controllers
 
 ### Unfolded Circle Remote 3
