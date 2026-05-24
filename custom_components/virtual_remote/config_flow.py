@@ -29,6 +29,28 @@ def _active_commands(entry: config_entries.ConfigEntry) -> list[dict]:
     return entry.options.get(CONF_COMMANDS) or entry.data.get(CONF_COMMANDS, [])
 
 
+def _all_button_entities(registry: er.EntityRegistry) -> list[str]:
+    """Return all enabled button entity IDs."""
+    return [
+        entry.entity_id
+        for entry in registry.entities.values()
+        if entry.domain == "button" and not entry.disabled_by
+    ]
+
+
+def _resolve_entities(user_input: dict, registry: er.EntityRegistry) -> list[str]:
+    """Return entity list from user input, expanding select_all if set."""
+    if user_input.get("select_all"):
+        return _all_button_entities(registry)
+    return user_input.get("button_entities") or []
+
+
+_ENTITY_SELECTOR = selector.selector(
+    {"entity": {"multiple": True, "filter": {"domain": "button"}}}
+)
+_BOOL_SELECTOR = selector.selector({"boolean": {}})
+
+
 class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     """Handle a Virtual Remote config flow."""
 
@@ -43,21 +65,28 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Step 1: remote name + button entity selection."""
+        errors: dict[str, str] = {}
+
         if user_input is not None:
-            self._remote_name = user_input["name"]
-            self._selected_entities = user_input["button_entities"]
-            return await self.async_step_names()
+            registry = er.async_get(self.hass)
+            entities = _resolve_entities(user_input, registry)
+            if not entities:
+                errors["base"] = "no_entities"
+            else:
+                self._remote_name = user_input["name"]
+                self._selected_entities = entities
+                return await self.async_step_names()
 
         return self.async_show_form(
             step_id="user",
             data_schema=vol.Schema(
                 {
                     vol.Required("name"): selector.selector({"text": {}}),
-                    vol.Required("button_entities"): selector.selector(
-                        {"entity": {"multiple": True, "filter": {"domain": "button"}}}
-                    ),
+                    vol.Optional("select_all", default=False): _BOOL_SELECTOR,
+                    vol.Optional("button_entities"): _ENTITY_SELECTOR,
                 }
             ),
+            errors=errors,
         )
 
     async def async_step_names(
@@ -105,25 +134,31 @@ class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
         self, user_input: dict[str, Any] | None = None
     ) -> FlowResult:
         """Step 1: edit the button entity selection."""
+        errors: dict[str, str] = {}
         current_entities = [
             c["entity_id"] for c in _active_commands(self.config_entry)
         ]
 
         if user_input is not None:
-            self._selected_entities = user_input["button_entities"]
-            return await self.async_step_names()
+            registry = er.async_get(self.hass)
+            entities = _resolve_entities(user_input, registry)
+            if not entities:
+                errors["base"] = "no_entities"
+            else:
+                self._selected_entities = entities
+                return await self.async_step_names()
 
         return self.async_show_form(
             step_id="init",
             data_schema=vol.Schema(
                 {
-                    vol.Required(
+                    vol.Optional("select_all", default=False): _BOOL_SELECTOR,
+                    vol.Optional(
                         "button_entities", default=current_entities
-                    ): selector.selector(
-                        {"entity": {"multiple": True, "filter": {"domain": "button"}}}
-                    ),
+                    ): _ENTITY_SELECTOR,
                 }
             ),
+            errors=errors,
         )
 
     async def async_step_names(
