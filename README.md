@@ -88,7 +88,9 @@ commands:
 
 ## Reconfiguring
 
-To add/remove buttons or rename commands, go to **Settings → Devices & Services**, find the entry, and click **Configure**.
+To add/remove buttons or rename commands, go to **Settings → Devices & Services → Integrations → Virtual Remotes**, then click the **gear icon** on your entry. This opens the full options flow.
+
+> The pencil/edit icon on the remote entity only changes the entity name and area — use the gear icon on the integration entry for button mappings.
 
 ---
 
