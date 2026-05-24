@@ -25,6 +25,14 @@
       "names": {
         "title": "Name the commands",
         "description": "Enter the command name for each button. These are the strings you pass to remote.send_command."
+      },
+      "power": {
+        "title": "Power button bindings",
+        "description": "Optionally choose which commands to send when the power toggle is pressed. Leave blank if your device has no separate power on/off commands.",
+        "data": {
+          "turn_on_command": "Turn on command",
+          "turn_off_command": "Turn off command"
+        }
       }
     },
     "abort": {
@@ -59,6 +67,14 @@
       "names": {
         "title": "Edit command names",
         "description": "Update the command name for each button."
+      },
+      "power": {
+        "title": "Power button bindings",
+        "description": "Optionally choose which commands to send when the power toggle is pressed.",
+        "data": {
+          "turn_on_command": "Turn on command",
+          "turn_off_command": "Turn off command"
+        }
       }
     }
   }

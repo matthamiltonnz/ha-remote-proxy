@@ -14,6 +14,7 @@ Useful when devices expose controls as separate buttons (common with MQTT-discov
 - Assign meaningful command names to each button (e.g. `button.unnamed_device_53` → `"Play"`)
 - Works with any `button` entity regardless of source (MQTT, LinknLink, Z-Wave, etc.)
 - Exposes a `commands` attribute listing all available commands — external controllers can read this to discover what's available
+- Bind the remote's power toggle to real device commands (e.g. `Power On` / `Power Off`)
 - Reconfigure at any time via the integration's **Configure** button — add/remove buttons and rename commands without recreating the entry
 
 ---
@@ -40,9 +41,11 @@ Useful when devices expose controls as separate buttons (common with MQTT-discov
 
 1. Go to **Settings → Devices & Services → Add Integration** and search for **Virtual Remotes**
 2. Enter a name for the remote (e.g. `Blu-ray Player`)
-3. Select the button entities you want to include
-4. Give each button a command name (e.g. `Play`, `Pause`, `Home`, `Up`, `Select`)
-5. A `remote.<name>` entity is created
+3. Select the button entities you want to include (pick a device to grab all its buttons at once, or choose individually)
+4. Review and remove any buttons you don't need
+5. Give each button a command name (e.g. `Play`, `Pause`, `Home`, `Up`, `Select`)
+6. Optionally bind the power toggle to turn-on and turn-off commands
+7. A `remote.<name>` entity is created
 
 Repeat for each device you want to expose as a remote.
 

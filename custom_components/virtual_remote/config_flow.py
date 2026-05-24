@@ -10,7 +10,7 @@ from homeassistant.core import callback
 from homeassistant.data_entry_flow import FlowResult
 from homeassistant.helpers import entity_registry as er, selector
 
-from .const import CONF_COMMANDS, DOMAIN
+from .const import CONF_COMMANDS, CONF_TURN_OFF_COMMAND, CONF_TURN_ON_COMMAND, DOMAIN
 
 
 def _default_command_name(entity_id: str, registry: er.EntityRegistry) -> str:
@@ -62,6 +62,7 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
         """Initialise flow state."""
         self._remote_name: str = ""
         self._selected_entities: list[str] = []
+        self._commands: list[dict] = []
 
     async def async_step_user(
         self, user_input: dict[str, Any] | None = None
@@ -126,14 +127,11 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
     ) -> FlowResult:
         """Step 2: assign a command name to each selected button."""
         if user_input is not None:
-            commands = [
+            self._commands = [
                 {"entity_id": eid, "command": user_input[eid]}
                 for eid in self._selected_entities
             ]
-            return self.async_create_entry(
-                title=self._remote_name,
-                data={CONF_COMMANDS: commands},
-            )
+            return await self.async_step_power()
 
         entity_reg = er.async_get(self.hass)
         schema = vol.Schema(
@@ -145,6 +143,36 @@ class VirtualRemoteConfigFlow(config_entries.ConfigFlow, domain=DOMAIN):
             }
         )
         return self.async_show_form(step_id="names", data_schema=schema)
+
+    async def async_step_power(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 3: optionally bind turn_on and turn_off to command names."""
+        if user_input is not None:
+            return self.async_create_entry(
+                title=self._remote_name,
+                data={
+                    CONF_COMMANDS: self._commands,
+                    CONF_TURN_ON_COMMAND: user_input.get("turn_on_command") or None,
+                    CONF_TURN_OFF_COMMAND: user_input.get("turn_off_command") or None,
+                },
+            )
+
+        command_names = [c["command"] for c in self._commands]
+        options = [{"value": n, "label": n} for n in command_names]
+        return self.async_show_form(
+            step_id="power",
+            data_schema=vol.Schema(
+                {
+                    vol.Optional("turn_on_command"): selector.selector(
+                        {"select": {"options": options}}
+                    ),
+                    vol.Optional("turn_off_command"): selector.selector(
+                        {"select": {"options": options}}
+                    ),
+                }
+            ),
+        )
 
     @staticmethod
     @callback
@@ -161,6 +189,7 @@ class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
     def __init__(self) -> None:
         """Initialise options flow state."""
         self._selected_entities: list[str] = []
+        self._commands: list[dict] = []
 
     async def async_step_init(
         self, user_input: dict[str, Any] | None = None
@@ -226,11 +255,11 @@ class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
     ) -> FlowResult:
         """Step 2: edit command names for each button."""
         if user_input is not None:
-            commands = [
+            self._commands = [
                 {"entity_id": eid, "command": user_input[eid]}
                 for eid in self._selected_entities
             ]
-            return self.async_create_entry(data={CONF_COMMANDS: commands})
+            return await self.async_step_power()
 
         current_names = {
             c["entity_id"]: c["command"]
@@ -249,3 +278,39 @@ class VirtualRemoteOptionsFlow(config_entries.OptionsFlow):
             }
         )
         return self.async_show_form(step_id="names", data_schema=schema)
+
+    async def async_step_power(
+        self, user_input: dict[str, Any] | None = None
+    ) -> FlowResult:
+        """Step 3: optionally bind turn_on and turn_off to command names."""
+        if user_input is not None:
+            return self.async_create_entry(
+                data={
+                    CONF_COMMANDS: self._commands,
+                    CONF_TURN_ON_COMMAND: user_input.get("turn_on_command") or None,
+                    CONF_TURN_OFF_COMMAND: user_input.get("turn_off_command") or None,
+                }
+            )
+
+        current_on = (
+            self.config_entry.options.get(CONF_TURN_ON_COMMAND)
+            or self.config_entry.data.get(CONF_TURN_ON_COMMAND)
+        )
+        current_off = (
+            self.config_entry.options.get(CONF_TURN_OFF_COMMAND)
+            or self.config_entry.data.get(CONF_TURN_OFF_COMMAND)
+        )
+        command_names = [c["command"] for c in self._commands]
+        options = [{"value": n, "label": n} for n in command_names]
+        schema_dict: dict = {
+            vol.Optional(
+                "turn_on_command", default=current_on or vol.UNDEFINED
+            ): selector.selector({"select": {"options": options}}),
+            vol.Optional(
+                "turn_off_command", default=current_off or vol.UNDEFINED
+            ): selector.selector({"select": {"options": options}}),
+        }
+        return self.async_show_form(
+            step_id="power",
+            data_schema=vol.Schema(schema_dict),
+        )

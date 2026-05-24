@@ -10,7 +10,7 @@ from homeassistant.core import HomeAssistant
 from homeassistant.helpers.device_registry import DeviceInfo
 from homeassistant.helpers.entity_platform import AddEntitiesCallback
 
-from .const import CONF_COMMANDS, DOMAIN
+from .const import CONF_COMMANDS, CONF_TURN_OFF_COMMAND, CONF_TURN_ON_COMMAND, DOMAIN
 
 _LOGGER = logging.getLogger(__name__)
 
@@ -23,7 +23,9 @@ async def async_setup_entry(
     """Set up a VirtualRemote entity for this config entry."""
     commands = entry.options.get(CONF_COMMANDS) or entry.data.get(CONF_COMMANDS, [])
     command_map = {c["command"]: c["entity_id"] for c in commands}
-    async_add_entities([VirtualRemote(entry, command_map)])
+    turn_on_cmd = entry.options.get(CONF_TURN_ON_COMMAND) or entry.data.get(CONF_TURN_ON_COMMAND)
+    turn_off_cmd = entry.options.get(CONF_TURN_OFF_COMMAND) or entry.data.get(CONF_TURN_OFF_COMMAND)
+    async_add_entities([VirtualRemote(entry, command_map, turn_on_cmd, turn_off_cmd)])
 
 
 class VirtualRemote(RemoteEntity):
@@ -34,12 +36,17 @@ class VirtualRemote(RemoteEntity):
     _attr_should_poll = False
 
     def __init__(
-        self, entry: ConfigEntry, command_map: dict[str, str]
+        self,
+        entry: ConfigEntry,
+        command_map: dict[str, str],
+        turn_on_command: str | None,
+        turn_off_command: str | None,
     ) -> None:
         """Initialise the virtual remote."""
         self._entry = entry
         self._command_map = command_map
-        self._is_on: bool = True
+        self._turn_on_command = turn_on_command
+        self._turn_off_command = turn_off_command
         self._attr_unique_id = entry.entry_id
         self._attr_device_info = DeviceInfo(
             identifiers={(DOMAIN, entry.entry_id)},
@@ -48,8 +55,8 @@ class VirtualRemote(RemoteEntity):
 
     @property
     def is_on(self) -> bool:
-        """Return whether the remote is enabled."""
-        return self._is_on
+        """Always on — state is tracked by the bound device, not this entity."""
+        return True
 
     @property
     def extra_state_attributes(self) -> dict[str, Any]:
@@ -58,9 +65,6 @@ class VirtualRemote(RemoteEntity):
 
     async def async_send_command(self, command: Iterable[str], **kwargs: Any) -> None:
         """Press the button entity mapped to each command."""
-        if not self._is_on:
-            _LOGGER.debug("Virtual remote '%s' is off — ignoring command", self._entry.title)
-            return
         for cmd in command:
             entity_id = self._command_map.get(cmd)
             if entity_id is None:
@@ -80,11 +84,11 @@ class VirtualRemote(RemoteEntity):
             )
 
     async def async_turn_on(self, **kwargs: Any) -> None:
-        """Enable the remote."""
-        self._is_on = True
-        self.async_write_ha_state()
+        """Send the configured turn-on command, if any."""
+        if self._turn_on_command:
+            await self.async_send_command([self._turn_on_command])
 
     async def async_turn_off(self, **kwargs: Any) -> None:
-        """Disable the remote — commands will be ignored until turned back on."""
-        self._is_on = False
-        self.async_write_ha_state()
+        """Send the configured turn-off command, if any."""
+        if self._turn_off_command:
+            await self.async_send_command([self._turn_off_command])

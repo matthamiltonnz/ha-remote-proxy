@@ -37,18 +37,22 @@ Config entry data:
         {"entity_id": "button.unnamed_device_53", "command": "Home"},
         {"entity_id": "button.unnamed_device_35", "command": "Up"},
         ...
-    ]
+    ],
+    "turn_on_command": "Power On",   # optional — one of the command names above
+    "turn_off_command": "Power Off"  # optional
 }
 ```
 
 Options (written by options flow, takes priority over data):
 ```python
 {
-    "commands": [...]  # Same structure — full replacement when options are saved
+    "commands": [...],         # Full replacement when options are saved
+    "turn_on_command": "...",  # optional
+    "turn_off_command": "..."  # optional
 }
 ```
 
-The entity reads: `entry.options.get("commands") or entry.data.get("commands", [])`.
+The entity reads: `entry.options.get(key) or entry.data.get(key)`.
 
 ## Usage
 
@@ -76,8 +80,17 @@ data:
 - **Step 1 (names)**: Field labels are the raw entity_id strings (e.g. `button.unnamed_device_53`)
   because HA config flow labels come from static strings.json keys and can't be dynamic.
   The entity picker in step 0 shows friendly names to help the user identify entities.
-- **Options flow**: Same two steps as initial setup. Reconfiguring replaces the full command list.
-  The previous command names are pre-filled as defaults.
+- **Step 2 (power)**: Two optional select dropdowns built from the command names entered in step 1.
+  If left blank, the toggle buttons on the remote card do nothing (no error).
+- **Options flow**: Same steps as initial setup. Reconfiguring replaces the full command list.
+  Previous command names and power bindings are pre-filled as defaults.
+
+## Power toggle behaviour
+
+`is_on` always returns `True` — the virtual remote has no meaningful on/off state.
+`async_turn_on` and `async_turn_off` fire `async_send_command` with the configured command
+name, which in turn calls `button.press` on the mapped entity. If no command is bound, the
+toggle is a no-op (HA still shows the toggle but pressing it has no effect).
 
 ## Compatible controller notes
 
