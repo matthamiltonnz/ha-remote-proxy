@@ -27,6 +27,8 @@ Useful when devices expose controls as separate buttons (common with MQTT-discov
 3. Search for **Virtual Remotes** and install
 4. Restart Home Assistant
 
+> **Note:** A restart is required after every install or update — HACS copies the files but HA only loads custom components on startup.
+
 ### Manual
 
 1. Copy `custom_components/virtual_remote/` into your HA `config/custom_components/` folder
