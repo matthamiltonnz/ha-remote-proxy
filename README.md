@@ -1,0 +1,104 @@
+# Virtual Remotes
+
+[![hacs_badge](https://img.shields.io/badge/HACS-Custom-orange.svg)](https://github.com/hacs/integration)
+
+A Home Assistant custom integration that groups individual button entities into a single `remote` entity, callable via `remote.send_command`.
+
+Useful when devices expose controls as separate buttons (common with MQTT-discovered devices like LinknLink eRemote Mini) but you need a unified remote entity for external controllers such as [Unfolded Circle Remote 3](https://www.unfoldedcircle.com/).
+
+---
+
+## Features
+
+- Create as many virtual remotes as you need — one per device
+- Assign meaningful command names to each button (e.g. `button.unnamed_device_53` → `"Play"`)
+- Works with any `button` entity regardless of source (MQTT, LinknLink, Z-Wave, etc.)
+- Exposes a `commands` attribute listing all available commands — external controllers can read this to discover what's available
+- Reconfigure at any time via the integration's **Configure** button — add/remove buttons and rename commands without recreating the entry
+
+---
+
+## Installation
+
+### HACS (recommended)
+
+1. In HACS, go to **Integrations** → three-dot menu → **Custom repositories**
+2. Add `https://github.com/matthamiltonnz/ha-virtual-remotes` as an **Integration**
+3. Search for **Virtual Remotes** and install
+4. Restart Home Assistant
+
+### Manual
+
+1. Copy `custom_components/virtual_remote/` into your HA `config/custom_components/` folder
+2. Restart Home Assistant
+
+---
+
+## Setup
+
+1. Go to **Settings → Devices & Services → Add Integration** and search for **Virtual Remotes**
+2. Enter a name for the remote (e.g. `Blu-ray Player`)
+3. Select the button entities you want to include
+4. Give each button a command name (e.g. `Play`, `Pause`, `Home`, `Up`, `Select`)
+5. A `remote.<name>` entity is created
+
+Repeat for each device you want to expose as a remote.
+
+---
+
+## Usage
+
+```yaml
+# Single command
+service: remote.send_command
+target:
+  entity_id: remote.blu_ray_player
+data:
+  command: Play
+
+# Multiple commands in sequence
+service: remote.send_command
+target:
+  entity_id: remote.blu_ray_player
+data:
+  command:
+    - Home
+    - Up
+    - Select
+```
+
+The `commands` state attribute lists every available command name:
+
+```yaml
+commands:
+  - Home
+  - Menu
+  - Pause
+  - Play
+  - Select
+  - Skip Backward
+  - Skip Forward
+  - Up
+  - Down
+  - Left
+  - Right
+```
+
+---
+
+## Reconfiguring
+
+To add/remove buttons or rename commands, go to **Settings → Devices & Services**, find the entry, and click **Configure**.
+
+---
+
+## Planned
+
+- Additional command sources: `remote` entities, `media_player` entities, `script` calls
+- This will allow mixing sources on a single virtual remote, e.g. volume from a media player and navigation from MQTT buttons
+
+---
+
+## License
+
+MIT

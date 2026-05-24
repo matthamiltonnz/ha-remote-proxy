@@ -1,8 +1,8 @@
 {
   "domain": "virtual_remote",
-  "name": "Virtual Remote",
+  "name": "Virtual Remotes",
   "config_flow": true,
-  "documentation": "https://github.com/matthamiltonnz/ha-virtual-remote",
+  "documentation": "https://github.com/matthamiltonnz/ha-virtual-remotes",
   "requirements": [],
   "dependencies": [],
   "codeowners": [],

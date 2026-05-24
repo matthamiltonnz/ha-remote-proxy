@@ -1,4 +1,4 @@
-# Virtual Remote — Home Assistant Custom Integration
+# Virtual Remotes — Home Assistant Custom Integration
 
 Wraps any set of `button` entities into a single `remote` entity, making them callable
 via `remote.send_command`. Designed for MQTT-discovered buttons (e.g. LinknLink eRemote Mini)
@@ -86,10 +86,29 @@ UC integration using the exact command name strings set during config flow.
 
 The remote entity is always `is_on = True` — virtual remotes have no meaningful power state.
 
+## Planned extensibility: additional command sources
+
+Currently every command maps to `button.press`. Future versions should extend the data
+model so each command can specify a different service:
+
+```python
+# Proposed extended command entry
+{"command": "Volume Up", "entity_id": "remote.tcl_tv", "service": "remote.send_command", "service_data": {"command": "VOLUME_UP"}}
+{"command": "Pause",     "entity_id": "media_player.lounge", "service": "media_player.media_pause", "service_data": {}}
+{"command": "Play",      "entity_id": "button.unnamed_device_39", "service": "button.press", "service_data": {}}
+```
+
+The `remote.py` `async_send_command` method would then call `hass.services.async_call`
+using the per-command `service` and `service_data` rather than always calling `button.press`.
+
+The config flow would need a per-command source type picker (button / remote / media_player / script)
+that shows the appropriate entity selector and optional service data fields.
+
+Backward compatibility: existing entries without a `service` key default to `button.press`.
+
 ## Community sharing checklist
 
-Before publishing:
 - [x] Update `manifest.json` `documentation` URL to the real GitHub repo
-- [ ] Add `README.md` with install instructions and usage examples
+- [x] Add `README.md` with install instructions and usage examples
 - [ ] Tag with semantic version matching `manifest.json` `version`
 - [ ] Submit to HACS default repository list (requires `hacs.json` + README + info.md)
