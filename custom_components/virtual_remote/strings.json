@@ -1,0 +1,43 @@
+{
+  "config": {
+    "step": {
+      "user": {
+        "title": "Create a Virtual Remote",
+        "description": "Give this remote a name and choose which button entities it should expose as commands.",
+        "data": {
+          "name": "Remote name",
+          "button_entities": "Button entities"
+        },
+        "data_description": {
+          "name": "Shown as the entity name, e.g. Blu-ray Player",
+          "button_entities": "Each selected button becomes one command on this remote"
+        }
+      },
+      "names": {
+        "title": "Name the commands",
+        "description": "Enter the command name for each button. These are the strings you pass to remote.send_command."
+      }
+    },
+    "abort": {
+      "already_configured": "[%key:common::config_flow::abort::already_configured_device%]"
+    },
+    "error": {
+      "unknown": "[%key:common::config_flow::error::unknown%]"
+    }
+  },
+  "options": {
+    "step": {
+      "init": {
+        "title": "Edit button entities",
+        "description": "Add or remove button entities from this remote.",
+        "data": {
+          "button_entities": "Button entities"
+        }
+      },
+      "names": {
+        "title": "Edit command names",
+        "description": "Update the command name for each button."
+      }
+    }
+  }
+}
