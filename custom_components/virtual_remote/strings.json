@@ -6,13 +6,13 @@
         "description": "Give this remote a name and choose which button entities it should expose as commands.",
         "data": {
           "name": "Remote name",
-          "select_all": "Select all button entities",
-          "button_entities": "Button entities"
+          "select_device": "Select all buttons from a device",
+          "button_entities": "Or select individual buttons"
         },
         "data_description": {
           "name": "Shown as the entity name, e.g. Blu-ray Player",
-          "select_all": "Adds every button entity in Home Assistant to this remote",
-          "button_entities": "Or pick individual buttons (ignored when Select all is enabled)"
+          "select_device": "Adds all button entities belonging to this device — the easiest option for a single LinknLink or MQTT device",
+          "button_entities": "Pick individual buttons manually (used when no device is selected above)"
         }
       },
       "names": {
@@ -34,12 +34,12 @@
         "title": "Edit button entities",
         "description": "Add or remove button entities from this remote.",
         "data": {
-          "select_all": "Select all button entities",
-          "button_entities": "Button entities"
+          "select_device": "Select all buttons from a device",
+          "button_entities": "Or select individual buttons"
         },
         "data_description": {
-          "select_all": "Adds every button entity in Home Assistant to this remote",
-          "button_entities": "Or pick individual buttons (ignored when Select all is enabled)"
+          "select_device": "Replaces current buttons with all button entities from this device",
+          "button_entities": "Pick individual buttons manually (used when no device is selected above)"
         }
       },
       "names": {

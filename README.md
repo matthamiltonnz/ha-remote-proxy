@@ -113,11 +113,9 @@ Other supported sources include any integration that exposes `button` entities â
 Virtual Remotes is a native fit â€” UC reads the `commands` state attribute to auto-discover
 available commands, then you map them to physical buttons in the UC integration.
 
-### Astrion Remote (via RosCard)
+### Astrion Remote (via [RosCard](https://github.com/yyqclhy/RosCard))
 
-RosCard (the Astrion Lovelace card collection) works by calling Home Assistant services
-from card button actions. To use a Virtual Remote with RosCard, configure each button
-action in your RosCard card to call `remote.send_command`:
+The [Astrion Remote](https://github.com/yyqclhy/RosCard) runs a Home Assistant Lovelace dashboard directly on the remote's screen. [RosCard](https://github.com/yyqclhy/RosCard) is the card collection that powers it, calling HA services from card button actions. To use a Virtual Remote with RosCard, configure each button action in your RosCard card to call `remote.send_command`:
 
 ```yaml
 type: custom:ros-tv-card
