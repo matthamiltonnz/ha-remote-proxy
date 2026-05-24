@@ -2,7 +2,7 @@
   "domain": "remote_proxy",
   "name": "Remote Proxy",
   "config_flow": true,
-  "documentation": "https://github.com/matthamiltonnz/ha-virtual-remotes",
+  "documentation": "https://github.com/matthamiltonnz/ha-remote-proxy",
   "requirements": [],
   "dependencies": [],
   "codeowners": [],
